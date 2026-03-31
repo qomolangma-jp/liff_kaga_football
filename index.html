@@ -136,8 +136,7 @@
       <!-- 選手用項目 -->
       <div id="player-fields">
         <div class="section-title">▼ 選手情報</div>
-
-        <label>JFA選手登録番号 （わかるときに入力してください）</label>
+        <label>JFA選手登録番号 <small>（わかるときに入力してください）</small></label>
         <input type="text" name="jfa_number" placeholder="例: 1234567890">
 
         <label>シャツのサイズ <span class="req">必須</span></label>
@@ -147,21 +146,22 @@
           <label><input type="radio" name="size" value="L"> L</label>
         </div>
 
-        <label>保護者名 <span class="req">必須</span></label>
-        <input type="text" name="parent_name" placeholder="例: 山田 次郎" data-required>
-
         <label>身長 <span class="req">必須</span></label>
         <input type="text" name="height" placeholder="例: 150" data-required>
 
         <label>体重 <span class="req">必須</span></label>
         <input type="text" name="weight" placeholder="例: 45" data-required>
+
+        <label>保護者名 <span class="req">必須</span></label>
+        <input type="text" name="parent_name" placeholder="例: 山田 次郎" data-required>
+
       </div>
 
       <!-- 指導者用項目 -->
       <div id="staff-fields">
         <div class="section-title">▼ 指導者情報</div>
 
-        <label>指導者登録番号 （わかるときに入力してください）</label>
+        <label>指導者登録番号 <small>（わかるときに入力してください）</small></label>
         <input type="text" name="staff_number" placeholder="例: 1234567890">
       </div>
 
@@ -297,7 +297,20 @@
         const result   = await response.json();
         console.log("GAS取得データ:", result);
         if (result) {
+          // birthday を birth_year / birth_month / birth_day に分解して反映
+          if (result.birthday) {
+            const parts = String(result.birthday).split('-');
+            if (parts.length === 3) {
+              const sy = document.querySelector('select[name="birth_year"]');
+              const sm = document.querySelector('select[name="birth_month"]');
+              const sd = document.querySelector('select[name="birth_day"]');
+              if (sy) sy.value = parseInt(parts[0], 10);
+              if (sm) sm.value = parseInt(parts[1], 10);
+              if (sd) sd.value = parseInt(parts[2], 10);
+            }
+          }
           Object.keys(result).forEach(key => {
+            if (key === 'birthday') return; // 上で処理済みのためスキップ
             const elements = document.getElementsByName(key);
             if (elements.length > 0) {
               const el = elements[0];
