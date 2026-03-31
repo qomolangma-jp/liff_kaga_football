@@ -35,8 +35,13 @@
     .req { background: #c00; color: #fff; font-size: 0.65em; padding: 2px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle; font-weight: normal; }
     .opt { background: #999; color: #fff; font-size: 0.65em; padding: 2px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle; font-weight: normal; }
     #player-fields, #staff-fields { display: none; }
-    .section-title { margin-top: 25px; padding: 8px 12px; background: #1d4c94; color: #fff; font-weight: bold; border-radius: 5px; font-size: 0.9em; }
+    #player-fields.visible, #staff-fields.visible { display: block; }
+    .section-title { margin-top: 35px; padding: 8px 12px; background: #1d4c94; color: #fff; font-weight: bold; border-radius: 5px; font-size: 0.9em; }
     .radio-group.three label { width: 31%; }
+    .privacy-wrap { text-align: center; margin-top: 35px; font-size: 0.9em; }
+    .privacy-label { display: inline-flex; align-items: center; justify-content: center; cursor: pointer; font-weight: normal; margin-top: 0; }
+    .privacy-checkbox { width: auto; margin-right: 8px; transform: scale(1.2); }
+    .privacy-link { color: #1d4c94; text-decoration: underline; }
   </style>
 </head>
 <body>
@@ -150,7 +155,16 @@
         <input type="text" name="staff_number" placeholder="例: 1234567890" data-required>
       </div>
 
-      <button type="button" id="submitBtn" onclick="submitData()">登録する</button>
+      <!-- プライバシーポリシー同意チェック -->
+      <div class="privacy-wrap">
+        <label class="privacy-label">
+          <input type="checkbox" id="agreePrivacy" class="privacy-checkbox" onchange="toggleSubmitButton()">
+          <span><a href="privacy_policy.html" target="_blank" rel="noopener noreferrer" class="privacy-link">プライバシーポリシー</a>に同意する</span>
+        </label>
+      </div>
+
+      <button type="button" id="submitBtn" disabled onclick="submitData()">登録する</button>
+
       <div id="status"></div>
     </form>
   </div>
@@ -164,6 +178,12 @@
       return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
     }
 
+    // プライバシーポリシー同意チェックでボタンの有効/無効を切り替える
+    function toggleSubmitButton() {
+      const isAgreed = document.getElementById('agreePrivacy').checked;
+      document.getElementById('submitBtn').disabled = !isAgreed;
+    }    
+
     // 選手/指導者フィールドの表示切り替え
     function toggleGroupFields(value) {
       const playerFields = document.getElementById('player-fields');
@@ -171,8 +191,8 @@
       const isPlayer = (value === '11' || value === '12');
       const isStaff  = (value === '指導者');
 
-      playerFields.style.display = isPlayer ? 'block' : 'none';
-      staffFields.style.display  = isStaff  ? 'block' : 'none';
+      playerFields.classList.toggle('visible', isPlayer);
+      staffFields.classList.toggle('visible', isStaff);
 
       // required の付け外し（data-required 属性を持つ input のみ対象）
       playerFields.querySelectorAll('[data-required]').forEach(el => {
