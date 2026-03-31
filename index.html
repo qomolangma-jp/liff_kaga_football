@@ -55,7 +55,7 @@
 
     <div class="loading-overlay" id="loadingOverlay">
       <div class="spinner"></div>
-      <div class="loading-text">送信中...</div>
+      <div class="loading-text" id="loadingText">送信中...</div>
     </div>
 
     <form id="profileForm">
@@ -282,13 +282,16 @@
       }
 
       // --- LIFF初期化・データ取得 ---
+      const overlay = document.getElementById('loadingOverlay');
+      const loadingText = document.getElementById('loadingText');
+      loadingText.innerText = "データを読み込み中...";
+      overlay.classList.add('visible');
       try {
         await liff.init({ liffId: LIFF_ID });
         if (!liff.isLoggedIn()) {
           liff.login();
           return;
         }
-        status.innerText = "データ読み込み中...";
         const profile  = await liff.getProfile();
         const response = await fetch(`${GAS_URL}?line_id=${profile.userId}`);
         const result   = await response.json();
@@ -321,9 +324,10 @@
           const groupEl = document.querySelector('input[name="group"]:checked');
           if (groupEl) toggleGroupFields(groupEl.value);
         }
-        status.innerText = "";
       } catch (err) {
         status.innerText = "初期化エラー: " + err.message;
+      } finally {
+        overlay.classList.remove('visible');
       }
     };
 
