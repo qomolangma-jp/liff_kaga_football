@@ -299,15 +299,13 @@
         if (result) {
           // birthday を birth_year / birth_month / birth_day に分解して反映
           if (result.birthday) {
-            const parts = String(result.birthday).split('-');
-            if (parts.length === 3) {
-              const sy = document.querySelector('select[name="birth_year"]');
-              const sm = document.querySelector('select[name="birth_month"]');
-              const sd = document.querySelector('select[name="birth_day"]');
-              if (sy) sy.value = parseInt(parts[0], 10);
-              if (sm) sm.value = parseInt(parts[1], 10);
-              if (sd) sd.value = parseInt(parts[2], 10);
-            }
+            const d = new Date(result.birthday);
+            const sy = document.querySelector('select[name="birth_year"]');
+            const sm = document.querySelector('select[name="birth_month"]');
+            const sd = document.querySelector('select[name="birth_day"]');
+            if (sy) sy.value = d.getFullYear();
+            if (sm) sm.value = d.getMonth() + 1;
+            if (sd) sd.value = d.getDate();
           }
           Object.keys(result).forEach(key => {
             if (key === 'birthday') return; // 上で処理済みのためスキップ
