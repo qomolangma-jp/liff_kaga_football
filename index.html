@@ -182,8 +182,13 @@
       <div id="staff-fields">
         <div class="section-title">▼ 指導者情報</div>
 
+        <label>指導者ライセンス</label>
+        <input type="text" name="staff_license" placeholder="例: 公認Ｃ級コーチ">
+
         <label>指導者登録番号 <small>（わかるときに入力してください）</small></label>
         <input type="text" name="staff_number" placeholder="例: 1234567890">
+
+
       </div>
 
       <!-- プライバシーポリシー同意チェック -->
@@ -409,14 +414,26 @@
           Object.keys(result).forEach(key => {
             if (key === 'birthday') return; // 上で処理済みのためスキップ
             const elements = document.getElementsByName(key);
-
-            // ▼▼追加：登録済みの画像URLがあればプレビューに表示する▼▼
+            
+            // ▼▼変更：登録済みの画像URLをHTML表示用に変換してプレビュー表示する▼▼
             if (key === 'photo_url' && result[key]) {
-              document.getElementById('photoPreview').src = result[key];
+              const driveUrl = result[key];
+              let displayUrl = driveUrl;
+              
+              // 正規表現でURLから「12Vj-QvGvN...」などのファイルIDを抽出
+              const match = driveUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
+              if (match && match[1]) {
+                const fileId = match[1];
+                // <img>タグで表示できるサムネイル取得用のURLに変換（幅800pxに最適化）
+                displayUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
+              }
+              
+              document.getElementById('photoPreview').src = displayUrl;
               document.getElementById('photoPreview').style.display = 'inline-block';
               return;
             }
-            // ▲▲ここまで▲▲            
+            // ▲▲ここまで▲▲
+
             if (elements.length > 0) {
               const el = elements[0];
               if (el.type === 'radio') {
