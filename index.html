@@ -160,6 +160,9 @@
         <label>JFA選手登録番号 <small>（わかるときに入力してください）</small></label>
         <input type="text" name="jfa_number" placeholder="例: 1234567890">
 
+        <label>ポジション <span class="req">必須</span></label>
+        <input type="text" name="position" placeholder="例: FW, MF, DF, GK" data-required>
+
         <label>シャツのサイズ <span class="req">必須</span></label>
         <div class="radio-group three">
           <label><input type="radio" name="size" value="S"> S</label>
@@ -414,7 +417,7 @@
           Object.keys(result).forEach(key => {
             if (key === 'birthday') return; // 上で処理済みのためスキップ
             const elements = document.getElementsByName(key);
-            
+
             // ▼▼変更：登録済みの画像URLをHTML表示用に変換してプレビュー表示する▼▼
             if (key === 'photo_url' && result[key]) {
               const driveUrl = result[key];
