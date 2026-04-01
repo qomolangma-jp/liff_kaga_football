@@ -277,7 +277,7 @@
       document.getElementById('submitBtn').disabled = !isAgreed;
     }    
 
-    // 選手/指導者フィールドの表示切り替え
+    // 選手/指導者フィールドの表示切り替え（値のクリア処理を追加）
     function toggleGroupFields(value) {
       const playerFields = document.getElementById('player-fields');
       const staffFields  = document.getElementById('staff-fields');
@@ -287,12 +287,28 @@
       playerFields.classList.toggle('visible', isPlayer);
       staffFields.classList.toggle('visible', isStaff);
 
-      // required の付け外し（data-required 属性を持つ input のみ対象）
-      playerFields.querySelectorAll('[data-required]').forEach(el => {
-        isPlayer ? el.setAttribute('required', '') : el.removeAttribute('required');
+      // 選手用フィールドの処理
+      playerFields.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.hasAttribute('data-required')) {
+          isPlayer ? el.setAttribute('required', '') : el.removeAttribute('required');
+        }
+        // ▼追加：非表示になる場合は値をクリアする
+        if (!isPlayer) {
+          if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+          else el.value = '';
+        }
       });
-      staffFields.querySelectorAll('[data-required]').forEach(el => {
-        isStaff ? el.setAttribute('required', '') : el.removeAttribute('required');
+
+      // 指導者用フィールドの処理
+      staffFields.querySelectorAll('input, select, textarea').forEach(el => {
+        if (el.hasAttribute('data-required')) {
+          isStaff ? el.setAttribute('required', '') : el.removeAttribute('required');
+        }
+        // ▼追加：非表示になる場合は値をクリアする
+        if (!isStaff) {
+          if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+          else el.value = '';
+        }
       });
     }
 
@@ -393,6 +409,14 @@
           Object.keys(result).forEach(key => {
             if (key === 'birthday') return; // 上で処理済みのためスキップ
             const elements = document.getElementsByName(key);
+
+            // ▼▼追加：登録済みの画像URLがあればプレビューに表示する▼▼
+            if (key === 'photo_url' && result[key]) {
+              document.getElementById('photoPreview').src = result[key];
+              document.getElementById('photoPreview').style.display = 'inline-block';
+              return;
+            }
+            // ▲▲ここまで▲▲            
             if (elements.length > 0) {
               const el = elements[0];
               if (el.type === 'radio') {
