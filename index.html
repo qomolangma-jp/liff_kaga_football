@@ -106,6 +106,20 @@
       <label>所属チーム（正式名称）<span class="req">必須</span></label>
       <input type="text" name="team" placeholder="例: 南加賀FC" required>
 
+
+      <!-- 画像アップロード機能（顔写真など） -->
+      <label>プロフィール画像 <span class="opt">任意</span></label>
+      <div class="photo-upload-area">
+        <label class="photo-upload-label">
+          カメラで撮影 / 画像を選択
+          <!-- accept="image/*" で画像のみ許可。capture="environment" でスマホなら背面カメラ優先（外せばカメラロールも開きやすい） -->
+          <input type="file" id="photoInput" accept="image/*">
+        </label>
+        <br>
+        <img id="photoPreview" alt="プレビュー">
+        <div id="photoFileName" style="font-size: 0.8em; color: #666; margin-top: 5px;"></div>
+      </div>            
+
       <!-- 所属年度 -->
       <input type="hidden" name="year" checked value="2026">
 
@@ -138,18 +152,6 @@
         <input type="text" name="emergency_phone" placeholder="例: 090-1234-5678" required>        
       </div>
 
-      <!-- 画像アップロード機能（顔写真など） -->
-      <label>プロフィール画像 <span class="opt">任意</span></label>
-      <div class="photo-upload-area">
-        <label class="photo-upload-label">
-          カメラで撮影 / 画像を選択
-          <!-- accept="image/*" で画像のみ許可。capture="environment" でスマホなら背面カメラ優先（外せばカメラロールも開きやすい） -->
-          <input type="file" id="photoInput" accept="image/*">
-        </label>
-        <br>
-        <img id="photoPreview" alt="プレビュー">
-        <div id="photoFileName" style="font-size: 0.8em; color: #666; margin-top: 5px;"></div>
-      </div>      
 
 
       <!-- 選手用項目 -->
