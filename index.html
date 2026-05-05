@@ -12,7 +12,7 @@
     label { display: block; margin-top: 25px; font-weight: bold; }
     .row-flex { display: flex; gap: 10px; }
     .row-flex .half { flex: 1; }
-    input[type="text"], select { width: 100%; padding: 12px; margin-top: 5px; background-color: #fff; border-width: 1px;}
+    input[type="text"], select, textarea { width: 100%; padding: 12px; margin-top: 5px; background-color: #fff; border-width: 1px;}
     .radio-group, .checkbox-group { margin-top: 5px; display: flex; gap: 15px 0; flex-wrap: wrap; justify-content: space-between;}
     .radio-group input[type="radio"],
     .checkbox-group input[type="checkbox"] { display: none; }
@@ -103,6 +103,12 @@
         </div>
       </div>
 
+      <label>性別 <span class="req">必須</span></label>
+      <div class="radio-group">
+        <label><input type="radio" name="gender" value="男"> 男</label>
+        <label><input type="radio" name="gender" value="女"> 女</label>
+      </div>
+
       <label>所属チーム（正式名称）<span class="req">必須</span></label>
       <input type="text" name="team" placeholder="例: 南加賀FC" required>
 
@@ -147,9 +153,6 @@
 
         <label>電話番号 <span class="req">必須</span></label>
         <input type="text" name="phone" placeholder="例: 090-1234-5678" required>
-
-        <label>緊急連絡先 <span class="req">必須</span></label>
-        <input type="text" name="emergency_phone" placeholder="例: 090-1234-5678" required>        
       </div>
 
 
@@ -157,11 +160,33 @@
       <!-- 選手用項目 -->
       <div id="player-fields">
         <div class="section-title">▼ 選手情報</div>
+
+        <label>チーム連絡先電話番号 <span class="req">必須</span></label>
+        <input type="text" name="team_phone" placeholder="例: 090-1234-5678" data-required>
+
+        <label>所属チーム監督氏名 <span class="req">必須</span></label>
+        <input type="text" name="team_manager" placeholder="例: 山田 一郎" data-required>
+
+        <label>前登録チーム <span class="opt">任意</span></label>
+        <input type="text" name="prev_team" placeholder="例: 加賀SC">
+        <small>無い場合は入力不要です</small>
+
+        <label>在籍学校名 <span class="req">必須</span></label>
+        <input type="text" name="school" placeholder="例: 加賀小学校" data-required>
+
         <label>JFA選手登録番号 <small>（わかるときに入力してください）</small></label>
         <input type="text" name="jfa_number" placeholder="例: 1234567890">
 
         <label>ポジション <span class="req">必須</span></label>
-        <input type="text" name="position" placeholder="例: FW, MF, DF, GK" data-required>
+        <select name="position" data-required>
+          <option value="">選択してください</option>
+          <option value="GP">GP</option>
+          <option value="CB">CB</option>
+          <option value="SB">SB</option>
+          <option value="IH">IH</option>
+          <option value="SH">SH</option>
+          <option value="FW">FW</option>
+        </select>
 
         <label>シャツのサイズ <span class="req">必須</span></label>
         <div class="radio-group three">
@@ -179,6 +204,36 @@
         <label>保護者名 <span class="req">必須</span></label>
         <input type="text" name="parent_name" placeholder="例: 山田 次郎" data-required>
 
+        <label>選手保護者ふりがな <span class="req">必須</span></label>
+        <input type="text" name="parent_kana" placeholder="例: やまだ じろう" data-required>
+
+        <label>緊急連絡先 <span class="req">必須</span></label>
+        <input type="text" name="emergency_phone" placeholder="例: 090-1234-5678" data-required>
+
+        <label>緊急連絡先の方の続柄 <span class="req">必須</span></label>
+        <div class="radio-group three">
+          <label><input type="radio" name="emergency_relation" value="父親" data-required> 父親</label>
+          <label><input type="radio" name="emergency_relation" value="母親" data-required> 母親</label>
+          <label><input type="radio" name="emergency_relation" value="その他" data-required> その他</label>
+        </div>
+
+        <label>学年 <span class="req">必須</span></label>
+        <div class="radio-group three">
+          <label><input type="radio" name="grade" value="小学4年" data-required> 小学4年</label>
+          <label><input type="radio" name="grade" value="小学5年" data-required> 小学5年</label>
+          <label><input type="radio" name="grade" value="小学6年" data-required> 小学6年</label>
+        </div>
+
+        <label>血液型 <span class="req">必須</span></label>
+        <select name="blood_type" data-required>
+          <option value="">選択してください</option>
+          <option value="A型">A型</option>
+          <option value="B型">B型</option>
+          <option value="O型">O型</option>
+          <option value="AB型">AB型</option>
+          <option value="不明">不明</option>
+        </select>
+
       </div>
 
       <!-- 指導者用項目 -->
@@ -193,6 +248,9 @@
 
 
       </div>
+
+      <label>自由記述 <span class="opt">任意</span></label>
+      <textarea name="memo" rows="4" placeholder="連絡事項など、自由にお書きください"></textarea>
 
       <!-- プライバシーポリシー同意チェック -->
       <div class="privacy-wrap">
@@ -289,7 +347,7 @@
     function toggleGroupFields(value) {
       const playerFields = document.getElementById('player-fields');
       const staffFields  = document.getElementById('staff-fields');
-      const isPlayer = (value === '11' || value === '12');
+      const isPlayer = (value === 'U11' || value === 'U12');
       const isStaff  = (value === '指導者');
 
       playerFields.classList.toggle('visible', isPlayer);
@@ -478,7 +536,7 @@
       }
       // 選手用: シャツのサイズチェック
       const groupVal = groupChecked.value;
-      if ((groupVal === '11' || groupVal === '12') && !document.querySelector('input[name="size"]:checked')) {
+      if ((groupVal === 'U11' || groupVal === 'U12') && !document.querySelector('input[name="size"]:checked')) {
         alert('シャツのサイズを選択してください。');
         return;
       }
