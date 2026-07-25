@@ -467,13 +467,16 @@
         if (result) {
           // birthday を birth_year / birth_month / birth_day に分解して反映
           if (result.birthday) {
-            const d = new Date(result.birthday);
+            const parts = result.birthday.split('T')[0].split('-');
+            const bYear  = parseInt(parts[0], 10);
+            const bMonth = parseInt(parts[1], 10);
+            const bDay   = parseInt(parts[2], 10);
             const sy = document.querySelector('select[name="birth_year"]');
             const sm = document.querySelector('select[name="birth_month"]');
             const sd = document.querySelector('select[name="birth_day"]');
-            if (sy) sy.value = d.getFullYear();
-            if (sm) sm.value = d.getMonth() + 1;
-            if (sd) sd.value = d.getDate();
+            if (sy) sy.value = bYear;
+            if (sm) sm.value = bMonth;
+            if (sd) sd.value = bDay;
           }
           Object.keys(result).forEach(key => {
             if (key === 'birthday') return; // 上で処理済みのためスキップ
@@ -562,28 +565,27 @@
           line_name: profile.displayName
         };
 
-        const formElements = document.querySelectorAll('input[name], select[name], textarea[name]');
-        formElements.forEach(el => {
-          const name = el.name;
-          if (['birth_year', 'birth_month', 'birth_day'].includes(name)) return;
-          if (el.type === 'radio') {
-            if (el.checked) data[name] = el.value;
-          } else if (el.type === 'checkbox') {
-            if (!data[name]) data[name] = [];
-            if (el.checked) data[name].push(el.value);
+        const formData = new FormData(document.getElementById('profileForm'));
+        for (const [key, value] of formData.entries()) {
+          if (['birth_year', 'birth_month', 'birth_day'].includes(key)) continue;
+          if (key in data) {
+            if (!Array.isArray(data[key])) data[key] = [data[key]];
+            data[key].push(value);
           } else {
-            data[name] = el.value;
+            data[key] = value;
           }
-        });
+        }
 
+        // 配列値（複数チェックボックスなど）をカンマ区切り文字列に変換
+        for (const key in data) {
+          if (Array.isArray(data[key])) data[key] = data[key].join(', ');
+        }
+
+        // 生年月日を YYYY-MM-DD 形式で結合
         const year  = document.querySelector('select[name="birth_year"]').value;
         const month = document.querySelector('select[name="birth_month"]').value.padStart(2, '0');
         const day   = document.querySelector('select[name="birth_day"]').value.padStart(2, '0');
         data['birthday'] = `${year}-${month}-${day}`;
-
-        for (let key in data) {
-          if (Array.isArray(data[key])) data[key] = data[key].join(', ');
-        }
 
         // ▼▼ 追加：画像ファイルが存在すれば処理してデータに追加 ▼▼
         if (photoInput.files && photoInput.files[0]) {
