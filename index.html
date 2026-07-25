@@ -13,7 +13,7 @@
     .row-flex { display: flex; gap: 10px; }
     .row-flex .half { flex: 1; }
     input[type="text"], select, textarea { width: 100%; padding: 12px; margin-top: 5px; background-color: #fff; border-width: 1px;}
-    .radio-group, .checkbox-group { margin-top: 5px; display: flex; gap: 15px 0; flex-wrap: wrap; justify-content: space-between;}
+    .radio-group, .checkbox-group { margin-top: 5px; display: flex; gap: 10px 0; flex-wrap: wrap; justify-content: space-between;}
     .radio-group input[type="radio"],
     .checkbox-group input[type="checkbox"] { display: none; }
     .radio-group label, .checkbox-group label {
@@ -29,13 +29,16 @@
     .radio-group label:hover, .checkbox-group label:hover { border-color: #b94100; color: #b94100; }
     .radio-group label:has(input:checked):hover,
     .checkbox-group label:has(input:checked):hover { color: #fff; }
+    
+    .radio-group.four label { width: 23.5%; font-size: 0.7em; padding: 12px 2px; }
+
     button { width: 100%; padding: 15px; background: #1a7a3c; color: white; border: none; border-radius: 30px; margin-top: 25px; font-weight: bold; cursor: pointer; transition: opacity 0.3s; }
     button:disabled { opacity: 0.5; cursor: not-allowed; }
     #status { text-align: center; margin-top: 10px; color: #666; font-size: 0.9em; }
     .req { background: #c00; color: #fff; font-size: 0.65em; padding: 2px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle; font-weight: normal; }
     .opt { background: #999; color: #fff; font-size: 0.65em; padding: 2px 6px; border-radius: 3px; margin-left: 6px; vertical-align: middle; font-weight: normal; }
-    #player-fields, #staff-fields { display: none; }
-    #player-fields.visible, #staff-fields.visible { display: block; }
+    #tell-fields, #player-fields, #staff-fields { display: block; }
+    #tell-fields.hidden, #player-fields.hidden, #staff-fields.hidden { display: none; }
     .section-title { margin-top: 35px; padding: 8px 12px; background: #1d4c94; color: #fff; font-weight: bold; border-radius: 5px; font-size: 0.9em; }
     .radio-group.three label { width: 31%; }
     .privacy-wrap { text-align: center; margin-top: 35px; font-size: 0.9em; }
@@ -47,7 +50,7 @@
     .spinner { width: 48px; height: 48px; border: 5px solid #fff; border-top-color: #1a7a3c; border-radius: 50%; animation: spin 0.8s linear infinite; }
     .loading-text { color: #fff; font-weight: bold; font-size: 1em; }
 
-    /* ▼ 画像アップロード用の追加CSS ▼ */
+    /* 画像アップロード用CSS */
     .photo-upload-area { margin-top: 10px; border: 2px dashed #ccc; padding: 20px; text-align: center; border-radius: 10px; background: #fafafa; }
     .photo-upload-area input[type="file"] { display: none; }
     .photo-upload-label { display: inline-block; padding: 10px 20px; background: #1d4c94; color: #fff; border-radius: 20px; cursor: pointer; font-size: 0.9em; }
@@ -66,6 +69,15 @@
     </div>
 
     <form id="profileForm">
+
+      <!-- 所属カテゴリ (先頭に移動) -->
+      <label>所属カテゴリ <span class="req">必須</span></label>
+      <div class="radio-group four">
+        <label><input type="radio" name="group" value="U11"> U11</label>
+        <label><input type="radio" name="group" value="U12"> U12</label>
+        <label><input type="radio" name="group" value="指導者"> 指導者</label>
+        <label><input type="radio" name="group" value="チーム代表"> チーム代表</label>
+      </div>
 
       <!-- 氏名 -->
       <div class="row-flex">
@@ -112,13 +124,11 @@
       <label>所属チーム（正式名称）<span class="req">必須</span></label>
       <input type="text" name="team" placeholder="例: 南加賀FC" required>
 
-
       <!-- 画像アップロード機能（顔写真など） -->
       <label>プロフィール画像 <span class="opt">任意</span></label>
       <div class="photo-upload-area">
         <label class="photo-upload-label">
           カメラで撮影 / 画像を選択
-          <!-- accept="image/*" で画像のみ許可。capture="environment" でスマホなら背面カメラ優先（外せばカメラロールも開きやすい） -->
           <input type="file" id="photoInput" accept="image/*">
         </label>
         <br>
@@ -127,36 +137,28 @@
       </div>            
 
       <!-- 所属年度 -->
-      <input type="hidden" name="year" checked value="2026">
+      <input type="hidden" name="year" value="2026">
 
-      <label>所属カテゴリ <span class="req">必須</span></label>
-      <div class="radio-group three">
-        <label><input type="radio" name="group" value="U11"> U11</label>
-        <label><input type="radio" name="group" value="U12"> U12</label>
-        <label><input type="radio" name="group" value="指導者"> 指導者</label>
-      </div>
-
+      <!-- 住所・連絡先情報 -->
       <div id="tell-fields">
         <div class="section-title">▼ 住所・連絡先</div>
 
         <label>郵便番号 <span class="req">必須</span></label>
-        <input type="text" name="postal_code" placeholder="例: 922-0000" required>
+        <input type="text" name="postal_code" placeholder="例: 922-0000" data-tell-required>
 
         <label>都道府県・市区町村 <span class="req">必須</span></label>
-        <input type="text" name="address_1st" placeholder="例: 石川県加賀市" required>
+        <input type="text" name="address_1st" placeholder="例: 石川県加賀市" data-tell-required>
 
         <label>番地 <span class="req">必須</span></label>
-        <input type="text" name="address_3rd" placeholder="例: 3丁目-1-1" required>
+        <input type="text" name="address_3rd" placeholder="例: 3丁目-1-1" data-tell-required>
 
         <label>建物名など <span class="opt">任意</span></label>
         <input type="text" name="address_4th" placeholder="例: 加賀ビル101">
 
         <label>電話番号 <span class="req">必須</span></label>
-        <input type="text" name="phone" placeholder="例: 090-1234-5678" required>
+        <input type="text" name="phone" placeholder="例: 090-1234-5678" data-tell-required>
         <small>ハイフン（-）を含めて入力してください</small>
       </div>
-
-
 
       <!-- 選手用項目 -->
       <div id="player-fields">
@@ -236,7 +238,6 @@
           <option value="AB型">AB型</option>
           <option value="不明">不明</option>
         </select>
-
       </div>
 
       <!-- 指導者用項目 -->
@@ -248,8 +249,6 @@
 
         <label>指導者登録番号 <small>（わかるときに入力してください）</small></label>
         <input type="text" name="staff_number" placeholder="例: 1234567890">
-
-
       </div>
 
       <label>自由記述 <span class="opt">任意</span></label>
@@ -274,7 +273,7 @@
     const LIFF_ID = '2009611873-AuUpY14Z';
     const GAS_URL = 'https://script.google.com/macros/s/AKfycbwyP8C1L82E3WgFGPN0xmQ-KhiTISg-hB6qZNtweSfGyHQj11wm6RYydBpaOa-qBTDoPA/exec';
 
-    // ▼▼ 追加：画像のプレビュー処理 ▼▼
+    // 画像プレビュー処理
     const photoInput = document.getElementById('photoInput');
     const photoPreview = document.getElementById('photoPreview');
     const photoFileName = document.getElementById('photoFileName');
@@ -295,7 +294,7 @@
       }
     });
 
-    // ▼▼ 追加：画像のリサイズ・圧縮・Base64変換ロジック ▼▼
+    // 画像圧縮・Base64変換
     function processImageForUpload(file) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -303,7 +302,6 @@
           const img = new Image();
           img.onload = function() {
             const canvas = document.createElement('canvas');
-            // 最大幅・高さを400pxに制限（スマホ写真は数千pxあるため）
             const MAX_SIZE = 400; 
             let width = img.width;
             let height = img.height;
@@ -324,7 +322,6 @@
             const ctx = canvas.getContext('2d');
             ctx.drawImage(img, 0, 0, width, height);
             
-            // JPEG形式で圧縮（品質0.5）し、Base64データとして取得
             const dataUrl = canvas.toDataURL('image/jpeg', 0.5);
             resolve(dataUrl); 
           };
@@ -340,41 +337,54 @@
       return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
     }
 
-    // プライバシーポリシー同意チェックでボタンの有効/無効を切り替える
     function toggleSubmitButton() {
       const isAgreed = document.getElementById('agreePrivacy').checked;
       document.getElementById('submitBtn').disabled = !isAgreed;
     }    
 
-    // 選手/指導者フィールドの表示切り替え（値のクリア処理を追加）
+    // カテゴリに応じた表示切替・バリデーション属性の付け外し
     function toggleGroupFields(value) {
+      const tellFields   = document.getElementById('tell-fields');
       const playerFields = document.getElementById('player-fields');
       const staffFields  = document.getElementById('staff-fields');
+
       const isPlayer = (value === 'U11' || value === 'U12');
       const isStaff  = (value === '指導者');
+      const isLeader = (value === 'チーム代表');
 
-      playerFields.classList.toggle('visible', isPlayer);
-      staffFields.classList.toggle('visible', isStaff);
+      // 住所・連絡先の制御（チーム代表の場合は非表示）
+      const showTell = !isLeader;
+      tellFields.classList.toggle('hidden', !showTell);
+      tellFields.querySelectorAll('input, select').forEach(el => {
+        if (el.hasAttribute('data-tell-required')) {
+          showTell ? el.setAttribute('required', '') : el.removeAttribute('required');
+        }
+        if (!showTell) {
+          if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
+          else el.value = '';
+        }
+      });
 
-      // 選手用フィールドの処理
+      // 選手情報の制御
+      playerFields.classList.toggle('hidden', !isPlayer);
       playerFields.querySelectorAll('input, select, textarea').forEach(el => {
         if (el.hasAttribute('data-required')) {
           isPlayer ? el.setAttribute('required', '') : el.removeAttribute('required');
         }
-        // ▼追加：非表示になる場合は値をクリアする
         if (!isPlayer) {
           if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
           else el.value = '';
         }
       });
 
-      // 指導者用フィールドの処理
+      // 指導者情報の制御（指導者またはチーム代表の場合表示）
+      const showStaff = (isStaff || isLeader);
+      staffFields.classList.toggle('hidden', !showStaff);
       staffFields.querySelectorAll('input, select, textarea').forEach(el => {
         if (el.hasAttribute('data-required')) {
-          isStaff ? el.setAttribute('required', '') : el.removeAttribute('required');
+          showStaff ? el.setAttribute('required', '') : el.removeAttribute('required');
         }
-        // ▼追加：非表示になる場合は値をクリアする
-        if (!isStaff) {
+        if (!showStaff) {
           if (el.type === 'radio' || el.type === 'checkbox') el.checked = false;
           else el.value = '';
         }
@@ -384,7 +394,7 @@
     window.onload = async function() {
       const status = document.getElementById('status');
 
-      // --- 生年月日セレクトボックス生成 ---
+      // 生年月日セレクトボックス生成
       const yearSelect  = document.querySelector('select[name="birth_year"]');
       const monthSelect = document.querySelector('select[name="birth_month"]');
       const daySelect   = document.querySelector('select[name="birth_day"]');
@@ -412,7 +422,7 @@
         daySelect.appendChild(option);
       }
 
-      // --- 郵便番号からの住所自動入力 ---
+      // 住所自動入力
       const postalCodeInput = document.querySelector('input[name="postal_code"]');
       postalCodeInput.addEventListener('keyup', async () => {
         const postalCode = postalCodeInput.value.replace('-', '');
@@ -434,22 +444,31 @@
         }
       });
 
-      // --- 所属カテゴリ切り替えイベント登録 ---
+      // 所属カテゴリ切り替えイベント登録
       document.querySelectorAll('input[name="group"]').forEach(radio => {
         radio.addEventListener('change', () => toggleGroupFields(radio.value));
       });
+
+      // URLクエリパラメータ(?group=xxx)による初期選択の評価
+      const urlParams = new URLSearchParams(window.location.search);
+      const urlGroup = urlParams.get('group');
+      if (urlGroup) {
+        const targetRadio = document.querySelector(`input[name="group"][value="${urlGroup}"]`);
+        if (targetRadio) {
+          targetRadio.checked = true;
+        }
+      }
 
       // 初期表示状態を反映
       const checkedGroup = document.querySelector('input[name="group"]:checked');
       toggleGroupFields(checkedGroup ? checkedGroup.value : '');
 
-      // ローカル環境ではLIFF処理をスキップ
       if (isLocalEnvironment()) {
         status.innerText = "ローカル環境で起動中...";
         return;
       }
 
-      // --- LIFF初期化・データ取得 ---
+      // LIFF初期化・データ取得
       const overlay = document.getElementById('loadingOverlay');
       const loadingText = document.getElementById('loadingText');
       loadingText.innerText = "データを読み込み中...";
@@ -465,7 +484,6 @@
         const result   = await response.json();
         console.log("GAS取得データ:", result);
         if (result) {
-          // birthday を birth_year / birth_month / birth_day に分解して反映
           if (result.birthday) {
             const parts = result.birthday.split('T')[0].split('-');
             const bYear  = parseInt(parts[0], 10);
@@ -479,27 +497,21 @@
             if (sd) sd.value = bDay;
           }
           Object.keys(result).forEach(key => {
-            if (key === 'birthday') return; // 上で処理済みのためスキップ
+            if (key === 'birthday') return;
             const elements = document.getElementsByName(key);
 
-            // ▼▼変更：登録済みの画像URLをHTML表示用に変換してプレビュー表示する▼▼
             if (key === 'photo_url' && result[key]) {
               const driveUrl = result[key];
               let displayUrl = driveUrl;
-              
-              // 正規表現でURLから「12Vj-QvGvN...」などのファイルIDを抽出
               const match = driveUrl.match(/\/d\/([a-zA-Z0-9_-]+)/);
               if (match && match[1]) {
                 const fileId = match[1];
-                // <img>タグで表示できるサムネイル取得用のURLに変換（幅800pxに最適化）
                 displayUrl = `https://drive.google.com/thumbnail?id=${fileId}&sz=w800`;
               }
-              
               document.getElementById('photoPreview').src = displayUrl;
               document.getElementById('photoPreview').style.display = 'inline-block';
               return;
             }
-            // ▲▲ここまで▲▲
 
             if (elements.length > 0) {
               const el = elements[0];
@@ -522,7 +534,6 @@
               }
             }
           });
-          // データ反映後に表示切り替えを再適用
           const groupEl = document.querySelector('input[name="group"]:checked');
           if (groupEl) toggleGroupFields(groupEl.value);
         }
@@ -534,13 +545,19 @@
     };
 
     async function submitData() {
-      // 所属カテゴリの必須チェック（ラジオはrequiredが効かないためJS検証）
+      // HTML5フォームの標準検証チェック（required違反があると提示）
+      const form = document.getElementById('profileForm');
+      if (!form.checkValidity()) {
+        form.reportValidity();
+        return;
+      }
+
       const groupChecked = document.querySelector('input[name="group"]:checked');
       if (!groupChecked) {
         alert('所属カテゴリを選択してください。');
         return;
       }
-      // 選手用: シャツのサイズチェック
+      
       const groupVal = groupChecked.value;
       if ((groupVal === 'U11' || groupVal === 'U12') && !document.querySelector('input[name="size"]:checked')) {
         alert('シャツのサイズを選択してください。');
@@ -576,23 +593,18 @@
           }
         }
 
-        // 配列値（複数チェックボックスなど）をカンマ区切り文字列に変換
         for (const key in data) {
           if (Array.isArray(data[key])) data[key] = data[key].join(', ');
         }
 
-        // 生年月日を YYYY-MM-DD 形式で結合
         const year  = document.querySelector('select[name="birth_year"]').value;
         const month = document.querySelector('select[name="birth_month"]').value.padStart(2, '0');
         const day   = document.querySelector('select[name="birth_day"]').value.padStart(2, '0');
         data['birthday'] = `${year}-${month}-${day}`;
 
-        // ▼▼ 追加：画像ファイルが存在すれば処理してデータに追加 ▼▼
         if (photoInput.files && photoInput.files[0]) {
           try {
-            // リサイズ＆圧縮したBase64データを取得
             const base64Image = await processImageForUpload(photoInput.files[0]);
-            // dataUrl のプレフィックス(data:image/jpeg;base64,)が含まれた状態で送る
             data['photo_data'] = base64Image;
           } catch (e) {
             alert("画像の処理に失敗しました。");
